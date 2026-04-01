@@ -1,109 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>RONIX EXECUTOR INSTALLER NEW</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RONIX EXECUTOR INSTALLER</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-body {
-    margin: 0;
-    background: black;
-    color: #00ffcc;
-    font-family: monospace;
-    text-align: center;
-    overflow: hidden;
-}
+    :root {
+      --green: #00ff41;
+      --green-dim: #00cc33;
+      --green-glow: #00ff4166;
+      --bg: #000e00;
+      --dark: #000800;
+    }
 
-/* Matrix effect */
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+    body {
+      background: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* Content */
-.container {
-    position: relative;
-    z-index: 1;
-    margin-top: 150px;
-}
+    /* ── Matrix rain canvas ── */
+    #matrix {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.55;
+    }
 
-h1 {
-    font-size: 40px;
-    text-shadow: 0 0 10px #00ffcc;
-}
+    /* ── Scanlines overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+    }
 
-p {
-    color: #00ffaa;
-}
+    /* ── Center card ── */
+    .card {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 60px 70px;
+      border: 1px solid var(--green-dim);
+      background: rgba(0, 10, 0, 0.75);
+      backdrop-filter: blur(4px);
+      box-shadow:
+        0 0 40px var(--green-glow),
+        inset 0 0 30px rgba(0,255,65,0.04);
+      animation: cardIn 1s ease both;
+    }
 
-/* Button */
-.btn {
-    display: inline-block;
-    margin-top: 40px;
-    padding: 20px 40px;
-    font-size: 20px;
-    color: black;
-    background: #00ffcc;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: 0.3s;
-}
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
-.btn:hover {
-    background: #00ffaa;
-    box-shadow: 0 0 20px #00ffcc;
-    transform: scale(1.1);
-}
-</style>
+    /* Corner decorations */
+    .card::before, .card::after,
+    .corner-bl, .corner-br {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: var(--green);
+      border-style: solid;
+    }
+    .card::before  { top: -1px; left: -1px;  border-width: 2px 0 0 2px; }
+    .card::after   { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: -1px; left: -1px;  border-width: 0 0 2px 2px; }
+    .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    /* ── Logo bar ── */
+    .logo-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .logo-bar {
+      display: inline-block;
+      background: var(--green);
+      padding: 6px 0;
+      width: 100%;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.3rem, 4vw, 2.1rem);
+      font-weight: 900;
+      color: #000;
+      letter-spacing: 0.08em;
+      text-shadow: none;
+    }
+
+    /* ── Subtitle ── */
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--green-dim);
+      letter-spacing: 0.15em;
+      margin: 22px 0 36px;
+      animation: blink-dot 1.4s step-end infinite;
+    }
+
+    @keyframes blink-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ── Status lines ── */
+    .status {
+      font-size: 0.72rem;
+      color: #00aa28;
+      margin-bottom: 34px;
+      line-height: 1.9;
+      text-align: left;
+      padding: 0 4px;
+    }
+
+    .status span { color: var(--green); }
+
+    /* ── Install button ── */
+    .install-btn {
+      display: inline-block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #000;
+      background: var(--green);
+      border: none;
+      padding: 18px 64px;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      box-shadow: 0 0 24px var(--green-glow), 0 0 60px var(--green-glow);
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .install-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0s;
+    }
+
+    .install-btn:hover::before {
+      transform: translateX(100%);
+      transition: transform 0.45s ease;
+    }
+
+    .install-btn:hover {
+      background: #fff;
+      box-shadow: 0 0 40px #00ff41, 0 0 100px var(--green-glow);
+      transform: translateY(-2px);
+    }
+
+    .install-btn:active { transform: translateY(1px); }
+
+    /* ── Progress bar (shown after click) ── */
+    .progress-wrap {
+      margin-top: 28px;
+      height: 4px;
+      background: rgba(0,255,65,0.12);
+      border: 1px solid rgba(0,255,65,0.2);
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .progress-wrap.active { opacity: 1; }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .dl-msg {
+      font-size: 0.7rem;
+      color: var(--green-dim);
+      margin-top: 10px;
+      letter-spacing: 0.1em;
+      min-height: 1em;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 32px;
+      font-size: 0.6rem;
+      color: #005510;
+      letter-spacing: 0.1em;
+    }
+  </style>
 </head>
-
 <body>
 
 <canvas id="matrix"></canvas>
 
-<div class="container">
-    <h1>RONIX EXECUTOR INSTALLER</h1>
-    <p>Secure download initialized...</p>
+<div class="card">
+  <div class="corner-bl"></div>
+  <div class="corner-br"></div>
 
-    <a href="ronix.zip" download class="btn">INSTALL</a>
+  <div class="logo-wrap">
+    <div class="logo-bar">
+      <div class="logo">RONIX EXECUTOR INSTALLER</div>
+    </div>
+  </div>
+
+  <div class="subtitle">[ SECURE DOWNLOAD INITIALIZED... ]</div>
+
+  <div class="status" id="statusLines">
+    <span>►</span> Checking system integrity........... <span>OK</span><br>
+    <span>►</span> Verifying authenticity............... <span>OK</span><br>
+    <span>►</span> Establishing secure channel.......... <span>OK</span><br>
+    <span>►</span> Package ready for deployment......... <span>READY</span>
+  </div>
+
+  <a class="install-btn" href="ronix.zip" download id="installBtn">INSTALL</a>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="dl-msg" id="dlMsg"></div>
+
+  <div class="footer">RONIX EXECUTOR &nbsp;|&nbsp; ALL RIGHTS RESERVED &nbsp;|&nbsp; v2.0</div>
 </div>
 
 <script>
-const canvas = document.getElementById('matrix');
-const ctx = canvas.getContext('2d');
+  /* ── Matrix rain ── */
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
 
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-const letters = "01";
-const fontSize = 14;
-const columns = canvas.width / fontSize;
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+  const fontSize = 14;
+  let cols, drops;
 
-const drops = [];
-for(let x = 0; x < columns; x++)
-    drops[x] = 1;
+  function initDrops() {
+    cols  = Math.floor(canvas.width / fontSize);
+    drops = Array.from({ length: cols }, () => Math.random() * -canvas.height / fontSize | 0);
+  }
+  initDrops();
+  window.addEventListener('resize', initDrops);
 
-function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0,8,0,0.055)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = fontSize + 'px "Share Tech Mono", monospace';
 
-    ctx.fillStyle = "#00ffcc";
-    ctx.font = fontSize + "px monospace";
-
-    for(let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random()*letters.length)];
-        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-
-        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
-            drops[i] = 0;
-
-        drops[i]++;
+    for (let i = 0; i < cols; i++) {
+      const char = chars[Math.random() * chars.length | 0];
+      const y = drops[i] * fontSize;
+      const brightness = Math.random();
+      if (brightness > 0.97) {
+        ctx.fillStyle = '#ccffcc';
+      } else if (brightness > 0.8) {
+        ctx.fillStyle = '#00ff41';
+      } else {
+        ctx.fillStyle = '#00881f';
+      }
+      ctx.fillText(char, i * fontSize, y);
+      if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
     }
-}
+  }
 
-setInterval(draw, 33);
+  setInterval(drawMatrix, 40);
+
+  /* ── Download feedback ── */
+  document.getElementById('installBtn').addEventListener('click', function() {
+    const wrap = document.getElementById('progressWrap');
+    const bar  = document.getElementById('progressBar');
+    const msg  = document.getElementById('dlMsg');
+
+    wrap.classList.add('active');
+    msg.textContent = '> Downloading package...';
+
+    setTimeout(() => { bar.style.width = '60%'; }, 50);
+    setTimeout(() => { bar.style.width = '100%'; msg.textContent = '> Download complete. Run the installer.'; }, 1300);
+  });
 </script>
-
 </body>
 </html>
