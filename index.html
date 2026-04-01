@@ -1,37 +1,109 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>RONIX EXECUTOR INSTALLER NEW</title>
-    <style>
-        body {
-            background-color: #0f0f0f;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-            padding-top: 100px;
-        }
+<meta charset="UTF-8">
+<title>RONIX EXECUTOR INSTALLER NEW</title>
 
-        h1 {
-            font-size: 40px;
-        }
+<style>
+body {
+    margin: 0;
+    background: black;
+    color: #00ffcc;
+    font-family: monospace;
+    text-align: center;
+    overflow: hidden;
+}
 
-        .btn {
-            background: #00ffcc;
-            padding: 20px 40px;
-            font-size: 20px;
-            color: black;
-            text-decoration: none;
-            border-radius: 10px;
-        }
-    </style>
+/* Matrix effect */
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Content */
+.container {
+    position: relative;
+    z-index: 1;
+    margin-top: 150px;
+}
+
+h1 {
+    font-size: 40px;
+    text-shadow: 0 0 10px #00ffcc;
+}
+
+p {
+    color: #00ffaa;
+}
+
+/* Button */
+.btn {
+    display: inline-block;
+    margin-top: 40px;
+    padding: 20px 40px;
+    font-size: 20px;
+    color: black;
+    background: #00ffcc;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #00ffaa;
+    box-shadow: 0 0 20px #00ffcc;
+    transform: scale(1.1);
+}
+</style>
 </head>
+
 <body>
 
-    <h1>RONIX EXECUTOR INSTALLER NEW</h1>
-    <p>Clique pour installer</p>
+<canvas id="matrix"></canvas>
 
-    <a href="ronix.zip" download class="btn">INSTALLER</a>
+<div class="container">
+    <h1>RONIX EXECUTOR INSTALLER</h1>
+    <p>Secure download initialized...</p>
+
+    <a href="ronix.zip" download class="btn">INSTALL</a>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const letters = "01";
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for(let x = 0; x < columns; x++)
+    drops[x] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ffcc";
+    ctx.font = fontSize + "px monospace";
+
+    for(let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random()*letters.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+
+setInterval(draw, 33);
+</script>
 
 </body>
 </html>
