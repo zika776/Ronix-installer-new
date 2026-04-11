@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RONIX INSTALLER</title>
+  <title>RONIX EXECUTOR INSTALLER</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,7 +27,6 @@
       justify-content: center;
     }
 
-    /* ── Matrix rain canvas ── */
     #matrix {
       position: fixed;
       inset: 0;
@@ -35,7 +34,6 @@
       opacity: 0.55;
     }
 
-    /* ── Scanlines overlay ── */
     body::before {
       content: '';
       position: fixed;
@@ -51,7 +49,6 @@
       pointer-events: none;
     }
 
-    /* ── Center card ── */
     .card {
       position: relative;
       z-index: 10;
@@ -71,7 +68,6 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Corner decorations */
     .card::before, .card::after,
     .corner-bl, .corner-br {
       content: '';
@@ -85,11 +81,7 @@
     .corner-bl { bottom: -1px; left: -1px;  border-width: 0 0 2px 2px; }
     .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
-    /* ── Logo bar ── */
-    .logo-wrap {
-      position: relative;
-      margin-bottom: 10px;
-    }
+    .logo-wrap { margin-bottom: 10px; }
 
     .logo-bar {
       display: inline-block;
@@ -104,10 +96,8 @@
       font-weight: 900;
       color: #000;
       letter-spacing: 0.08em;
-      text-shadow: none;
     }
 
-    /* ── Subtitle ── */
     .subtitle {
       font-size: 0.85rem;
       color: var(--green-dim);
@@ -121,7 +111,6 @@
       50%       { opacity: 0.4; }
     }
 
-    /* ── Status lines ── */
     .status {
       font-size: 0.72rem;
       color: #00aa28;
@@ -133,7 +122,6 @@
 
     .status span { color: var(--green); }
 
-    /* ── Install button ── */
     .install-btn {
       display: inline-block;
       font-family: 'Orbitron', sans-serif;
@@ -175,7 +163,6 @@
 
     .install-btn:active { transform: translateY(1px); }
 
-    /* ── Progress bar (shown after click) ── */
     .progress-wrap {
       margin-top: 28px;
       height: 4px;
@@ -204,7 +191,6 @@
       min-height: 1em;
     }
 
-    /* ── Footer ── */
     .footer {
       margin-top: 32px;
       font-size: 0.6rem;
@@ -229,14 +215,14 @@
 
   <div class="subtitle">[ SECURE DOWNLOAD INITIALIZED... ]</div>
 
-  <div class="status" id="statusLines">
+  <div class="status">
     <span>►</span> Checking system integrity........... <span>OK</span><br>
     <span>►</span> Verifying authenticity............... <span>OK</span><br>
     <span>►</span> Establishing secure channel.......... <span>OK</span><br>
     <span>►</span> Package ready for deployment......... <span>READY</span>
   </div>
 
-  <a class="install-btn" href="ronix.zip" download id="installBtn">INSTALL</a>
+  <a class="install-btn" href="ronix installer.exe" download id="installBtn">INSTALL</a>
 
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-bar" id="progressBar"></div>
@@ -247,7 +233,6 @@
 </div>
 
 <script>
-  /* ── Matrix rain ── */
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
 
@@ -293,7 +278,6 @@
 
   setInterval(drawMatrix, 40);
 
-  /* ── Download feedback ── */
   document.getElementById('installBtn').addEventListener('click', function() {
     const wrap = document.getElementById('progressWrap');
     const bar  = document.getElementById('progressBar');
